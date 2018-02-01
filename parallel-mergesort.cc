@@ -119,15 +119,19 @@ merge (keytype* A, int l1, int r1, int l2, int r2, keytype* B, int l3, int lvl){
                 swap(n1,n2);
             }
             if(n1<=0) return;
+            keytype* T = newKeys(r2+1);
+            memcpy(T+l1, A+l1, (r1 - l1 + 1) * sizeof(keytype));
+            memcpy(T+l2, A+l2, (r1 - l1 + 1) * sizeof(keytype));
             int mid1 = (l1+r1)>>1;
-            int mid2 = binaryS(A[mid1], A, l2, r2);
+            int mid2 = binaryS(T[mid1], T, l2, r2);
             int mid3 = l3 + (mid1 - l1) + (mid2 - l2);
-            B[mid3] =  A[mid1];
+            B[mid3] =  T[mid1];
 
             #pragma omp task 
-            merge(A, l1, mid1-1, l2, mid2-1, B, l3, lvl/2);
-            merge(A, mid1+1, r1, mid2, r2, B, mid3+1, lvl/2);
+            merge(T, l1, mid1-1, l2, mid2-1, B, l3, lvl/2);
+            merge(T, mid1+1, r1, mid2, r2, B, mid3+1, lvl/2);
             #pragma omp taskwait   
+            free (T);
         }
         else {
             mergeSequential(A, l1, r1, l2, r2, B, l3);
