@@ -26,6 +26,25 @@ binaryS (int tar, keytype* A, int l, int r);
 void
 mergeSequential (keytype* A, int l1, int r1, int l2, int r2, keytype* B, int l3);
 
+
+static int compare (const void* a, const void* b)
+{
+  keytype ka = *(const keytype *)a;
+  keytype kb = *(const keytype *)b;
+  if (ka < kb)
+    return -1;
+  else if (ka == kb)
+    return 0;
+  else
+    return 1;
+}
+void sequentialQSort (int N, keytype* A, keytype* B, int s)
+{
+  qsort (A, N, sizeof (keytype), compare);
+  memcpy (B+s, A, (N) * sizeof (keytype));
+}
+
+
 void
 parallelSort (int N, keytype* A)
 {
@@ -68,8 +87,10 @@ mergeSort (keytype* A, int l, int r, keytype* B, int s, int lvl){
 
             }
             else {
-                mergeSort(A, l, mid, T, 0, lvl);
-                mergeSort(A, mid+1, r, T, len, lvl);
+                sequentialQSort (mid-l+1, A+l, T, 0);
+                sequentialQSort (r-mid, A+mid+1, T, len);
+                //mergeSort(A, l, mid, T, 0, lvl);
+                //mergeSort(A, mid+1, r, T, len, lvl);
             }
             merge(T, 0, len-1, len, n-1, B, s, lvl);
             free(T);
@@ -129,6 +150,7 @@ mergeSequential (keytype* A, int l1, int r1, int l2, int r2, keytype* B, int l3)
         else B[l3+i] = A[b++];
     }
 }
+
 
 //if(lvl<4) printf("Thread %d is sorting %d through %d\n", omp_get_thread_num(), l, r);  
             // printf("%d\n",omp_get_max_threads());
