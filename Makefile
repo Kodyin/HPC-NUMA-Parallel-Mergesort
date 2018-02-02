@@ -1,8 +1,7 @@
 CC = g++
-CFLAGS =
-COPTFLAGS = -O3 -g
+CFLAGS = 
+COPTFLAGS = -fopenmp
 LDFLAGS =
-OPENMP = -fopenmp
 
 default:
 	@echo "=================================================="
@@ -16,8 +15,7 @@ default:
 
 # Mergesort driver using OpenMP
 mergesort-omp: driver.o sort.o parallel-mergesort.o
-	$(CC) $(COPTFLAGS) -o $@ $^ $(OPENMP)
-
+	$(CC) $(COPTFLAGS) -o $@ $^
 
 %.o: %.cc
 	$(CC) $(CFLAGS) $(COPTFLAGS) -o $@ -c $<
