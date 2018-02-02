@@ -1,10 +1,13 @@
 # EECS224 - HPC - Parallel Mergesort
 OPEN-MP
+
 NUMA oriented
+
 Author: Gaozhiquan Wang
 
 ## Instruction
-To run, 
+To run,
+
   make mergesort-omp
   ./mergesort-omp 10000000
   
