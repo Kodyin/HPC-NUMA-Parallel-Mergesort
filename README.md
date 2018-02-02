@@ -8,8 +8,9 @@ Author: Gaozhiquan Wang
 ## Instruction
 To run,
 
-  make mergesort-omp
-  ./mergesort-omp 10000000
+    make mergesort-omp
+    
+    ./mergesort-omp 10000000
   
 This is a NUMA oriented algorithm implementation with some auxiliary memory allocation.
 
