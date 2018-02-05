@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <algorithm>
 #include <string.h>
 using namespace std;
 
@@ -18,7 +19,7 @@ parallelSort (int N, keytype* A);
 void
 mergeSort (keytype* A, int l, int r, keytype* B, int s, int lvl);
 void
-merge (keytype* A, int l1, int r1, int l2, int r2, keytype* B, int l3, int lvl);
+Pmerge (keytype* A, int l1, int r1, int l2, int r2, keytype* B, int l3, int lvl);
 int
 binaryS (int tar, keytype* A, int l, int r);
 void 
@@ -59,15 +60,14 @@ mergeSort (keytype* A, int l, int r, keytype* B, int s, int lvl){
                 mergeSort(A, l, mid, T, 0, lvl/2);
                 mergeSort(A, mid+1, r, T, len, lvl/2);
                 #pragma omp taskwait
-                merge(T, 0, len-1, len, n-1, B, s, lvl);
+                Pmerge(T, 0, len-1, len, n-1, B, s, lvl);
                 free(T);
             }
             /* Sequential merge*/
             else {
-                keytype* T = newKeys(r+1);
-                MSort(A,T,l,r);
-                memcpy(B+s, A+l, (r-l+1) * sizeof(keytype));;
-                free(T);
+                std::sort(A + l, A + mid + 1);
+                std::sort(A + mid + 1, A + r + 1);
+                std::merge(A + l, A + mid + 1, A + mid + 1, A + r + 1, B+s);
             }
         }
     
@@ -84,7 +84,7 @@ binaryS (int tar, keytype* A, int l, int r){
 }
 
 void
-merge (keytype* A, int l1, int r1, int l2, int r2, keytype* B, int l3, int lvl){
+Pmerge (keytype* A, int l1, int r1, int l2, int r2, keytype* B, int l3, int lvl){
         int n1 = r1 - l1 + 1, n2 = r2 - l2 + 1;
         if(lvl>1) /* Spawning */
         {
@@ -100,12 +100,12 @@ merge (keytype* A, int l1, int r1, int l2, int r2, keytype* B, int l3, int lvl){
             B[mid3] =  A[mid1];
 
             #pragma omp task 
-            merge(A, l1, mid1-1, l2, mid2-1, B, l3, lvl/2);
-            merge(A, mid1+1, r1, mid2, r2, B, mid3+1, lvl/2);
+            Pmerge(A, l1, mid1-1, l2, mid2-1, B, l3, lvl/2);
+            Pmerge(A, mid1+1, r1, mid2, r2, B, mid3+1, lvl/2);
             #pragma omp taskwait   
         }
         else {
-            mergeSequential(A, l1, r1, l2, r2, B, l3);
+            std::merge(A + l1, A + r1 + 1, A + l2, A + r2 + 1, B+l3);
         }                               
 }
 
