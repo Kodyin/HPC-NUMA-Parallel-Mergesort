@@ -22,10 +22,6 @@ void
 Pmerge (keytype* A, int l1, int r1, int l2, int r2, keytype* B, int l3, int lvl);
 int
 binaryS (int tar, keytype* A, int l, int r);
-void 
-MSort(keytype* A,keytype* T,int l,int r);
-void
-mergeSequential (keytype* A, int l1, int r1, int l2, int r2, keytype* B, int l3);
 
 void
 parallelSort (int N, keytype* A)
@@ -109,37 +105,6 @@ Pmerge (keytype* A, int l1, int r1, int l2, int r2, keytype* B, int l3, int lvl)
         }                               
 }
 
- /* Sequential */
-void 
-MSort(keytype* A,keytype* T,int l,int r)
-{
-    int mid;
-    if(l<r)
-    {
-        mid=(l+r)/2;
-        MSort(A,T,l,mid);
-        MSort(A,T,mid+1,r);
-        mergeSequential(A,l,mid,mid+1,r, T, l);
-        memcpy(A+l, T+l, (r-l+1) * sizeof(keytype));
-    }
-}
-
-void
-mergeSequential (keytype* A, int l1, int r1, int l2, int r2, keytype* B, int l3){
-    int a = l1, b = l2;
-    for(int i = 0; i<r1-l1+1+r2-l2+1; i++){
-        if(a>r1) {
-            memcpy(B + l3 + i, A + b, (r2 - b + 1) * sizeof(keytype));
-            break;
-        }
-        else if(b>r2) {
-            memcpy(B + l3 + i, A + a, (r1 - a + 1) * sizeof(keytype));
-            break;
-        }
-        else if(A[a] < A[b]) B[l3+i] = A[a++];
-        else B[l3+i] = A[b++];
-    }
-}
 
 
 /* eof */
